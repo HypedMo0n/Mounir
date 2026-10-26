@@ -266,9 +266,7 @@ button,a{touch-action:manipulation}button:focus-visible,a:focus-visible,[role="b
     <button class="rm" aria-pressed="false"><i aria-hidden="true"></i><span>Recommend one book or song 📚<small>Something that says a lot about you.</small></span></button>
     <button class="rm" aria-pressed="false"><i aria-hidden="true"></i><span>Tell me what made you smile this week<small>Big or tiny, both count.</small></span></button>
     <button class="rm" aria-pressed="false"><i aria-hidden="true"></i><span>Choose: mountains, sea or city<small>For a day out, with no wrong answer.</small></span></button>
-    <button class="rm" aria-pressed="false"><i aria-hidden="true"></i><span>Ask me one question<small>Anything you’re curious about. I’ll answer honestly.</small></span></button>
-    <button class="rm" aria-pressed="false"><i aria-hidden="true"></i><span>Bowling dare 🎳<small>I’m challenging you to a game. Accept whenever you’re ready.</small></span></button>
-    <p class="note">Tick these off whenever you feel like it. This list doesn’t send anything.</p><button id="accept-bowling" class="challenge-cta">Accept the bowling challenge 🎳</button>
+    <p class="note">Tick these off whenever you feel like it. This list doesn’t send anything.</p>
   </div>
 </div>
 
@@ -382,7 +380,7 @@ function syncDraft(){var t=ans.value.trim();$('#send').disabled=!t;var bubble=$(
 function setDraft(t){ans.value=t;syncDraft();ans.focus({preventScroll:true})}
 function appendDraft(t){setDraft((ans.value.trim()?ans.value.trim()+'\n\n':'')+t)}
 function challengeBowling(){openMessages();appendDraft('Challenge accepted 🎳 Let’s see if your bowling matches the confidence. When are we playing?')}
-$('#accept-bowling').addEventListener('click',challengeBowling);
+
 function openMessages(){$$('.sheet').forEach(function(s){s.classList.remove('open')});$('#turn').classList.add('open');setTimeout(function(){$('#conversation').scrollTop=$('#conversation').scrollHeight},60)}
 $$('[data-prompt]').forEach(function(c){c.addEventListener('click',function(){var prompt=c.dataset.prompt;setDraft(ans.value.trim()?ans.value+'\n'+prompt:prompt)})});
 ans.addEventListener('input',syncDraft);
