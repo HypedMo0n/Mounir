@@ -159,6 +159,26 @@ button,a{touch-action:manipulation}button:focus-visible,a:focus-visible,[role="b
 .flower-result .market-label{color:#d6b594;font-size:10px;letter-spacing:2px}
 @media(prefers-reduced-motion:reduce){.gift-arriving .bouquet-photo{animation:none}.gift-confetti{display:none}}
 
+
+#lock.passcode-open{justify-content:center;padding:50px 24px 30px;background:#101015ee;backdrop-filter:blur(24px)}
+#lock.passcode-open>.date,#lock.passcode-open>.time,#lock.passcode-open>.n3,#lock.passcode-open>.hint{display:none}
+.passcode-panel{position:relative;width:100%;max-width:290px;text-align:center;color:white}
+.passcode-panel[hidden]{display:none}
+.passcode-panel h2{font-size:22px;font-weight:500;letter-spacing:-.4px;margin:0 0 12px}
+.passcode-panel>p{font-size:13px;color:#ffffffb3;margin:0 0 22px}
+.passcode-dots{display:flex;gap:22px;justify-content:center;margin:18px 0 8px}
+.passcode-dots i{width:13px;height:13px;border:1.5px solid white;border-radius:50%;transition:background 100ms}
+.passcode-dots i.filled{background:white}
+.passcode-error{height:22px;font-size:12px;color:#ffc4bf;margin:9px 0 16px}
+.passcode-keys{display:grid;grid-template-columns:repeat(3,1fr);gap:16px 20px;justify-items:center}
+.passcode-keys button{width:72px;height:72px;border:0;border-radius:50%;background:#ffffff22;color:white;font:inherit;font-size:29px;cursor:pointer;touch-action:manipulation;transition:background 120ms,transform 120ms}
+.passcode-keys button:active{background:#ffffff55;transform:scale(.94)}
+.passcode-keys button:focus-visible,#passcode-cancel:focus-visible{outline:2px solid white;outline-offset:4px}
+.passcode-keys button small{display:block;font-size:9px;letter-spacing:2px;line-height:1.4}
+.passcode-keys .key-delete{font-size:13px;background:none}
+#passcode-cancel{margin-top:24px;padding:10px 18px;border:0;background:none;color:white;font:inherit;font-size:14px;cursor:pointer}
+#hint{border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+@media(max-height:680px){.passcode-keys button{width:62px;height:62px}.passcode-keys{gap:10px 18px}#lock.passcode-open{padding-top:30px}.passcode-panel>p{margin-bottom:14px}#passcode-cancel{margin-top:12px}}
 </style>
 </head>
 <body>
@@ -307,7 +327,8 @@ button,a{touch-action:manipulation}button:focus-visible,a:focus-visible,[role="b
   <div class="date" id="date" style="position:relative"></div>
   <div class="time" id="time" style="position:relative"></div>
   <div class="n3" id="n3"></div>
-  <div class="hint" id="hint" style="margin:18px 0 6px">Swipe up to unlock</div>
+  <button type="button" class="hint" id="hint" style="margin:18px 0 6px">Swipe up or tap to unlock</button>
+<section class="passcode-panel" id="passcode-panel" aria-labelledby="passcode-title" hidden><h2 id="passcode-title">Enter Passcode</h2><p>A little world waiting for you.</p><div class="passcode-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div id="passcode-status" class="passcode-error" role="status" aria-live="polite"></div><div class="passcode-keys"><button type="button" data-digit="1" aria-label="1">1<small aria-hidden="true"></small></button><button type="button" data-digit="2" aria-label="2">2<small aria-hidden="true">ABC</small></button><button type="button" data-digit="3" aria-label="3">3<small aria-hidden="true">DEF</small></button><button type="button" data-digit="4" aria-label="4">4<small aria-hidden="true">GHI</small></button><button type="button" data-digit="5" aria-label="5">5<small aria-hidden="true">JKL</small></button><button type="button" data-digit="6" aria-label="6">6<small aria-hidden="true">MNO</small></button><button type="button" data-digit="7" aria-label="7">7<small aria-hidden="true">PQRS</small></button><button type="button" data-digit="8" aria-label="8">8<small aria-hidden="true">TUV</small></button><button type="button" data-digit="9" aria-label="9">9<small aria-hidden="true">WXYZ</small></button><span></span><button type="button" data-digit="0" aria-label="0">0</button><button type="button" class="key-delete" id="passcode-delete">Delete</button></div><button type="button" id="passcode-cancel">Cancel</button></section>
 </div>
 <div class="island"></div><div class="homebar"></div>
 </div>
@@ -322,14 +343,24 @@ tick();setInterval(tick,20000);
 function toast(t){var e=$('#toast');e.textContent=t;e.classList.add('on');setTimeout(function(){e.classList.remove('on')},2200)}
 var MS=['Bonjour mademoiselle ☀️','Қайырлы таң Talvi!','I got a little carried away and made you something to tap through ahaha 🤭','A few things about me and a few excuses to get to know you better.','Have a little look when you feel like it 🙂'];
 (function(){var n=$('#n3'),i=0;function nx(){if(i>=MS.length){setTimeout(function(){$('#hint').style.opacity=1},500);return}
-var txt=MS[i],t=document.createElement('button');t.type='button';t.className='notif glass';t.setAttribute('aria-label','Message from Mounir: '+txt);t.addEventListener('click',function(){unlock();openMessages()});t.innerHTML='<div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.5 2 11c0 2.6 1.5 4.9 4 6.4L5 21l4.8-2.2c.7.1 1.5.2 2.2.2 5.5 0 10-3.6 10-8S17.5 3 12 3z" fill="white"/></svg></div><div style="min-width:0"><b>Mounir · now</b><span class="dts"><i></i><i></i><i></i></span></div>';n.appendChild(t);
+var txt=MS[i],t=document.createElement('button');t.type='button';t.className='notif glass';t.setAttribute('aria-label','Message from Mounir: '+txt);t.addEventListener('click',function(){requestUnlock(true)});t.innerHTML='<div class="ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3C6.5 3 2 6.5 2 11c0 2.6 1.5 4.9 4 6.4L5 21l4.8-2.2c.7.1 1.5.2 2.2.2 5.5 0 10-3.6 10-8S17.5 3 12 3z" fill="white"/></svg></div><div style="min-width:0"><b>Mounir · now</b><span class="dts"><i></i><i></i><i></i></span></div>';n.appendChild(t);
 setTimeout(function(){t.lastChild.innerHTML='<b>Mounir · now</b>'+txt;i++;setTimeout(nx,250)},350+txt.length*7)}
 setTimeout(nx,300)})();
-var lock=$('#lock'),y0=null;
-function unlock(){lock.style.transition='';lock.style.transform='translateY(-100%)';lock.style.opacity='0';setTimeout(function(){lock.style.display='none'},600)}
-lock.addEventListener('pointerdown',function(e){y0=e.clientY;lock.style.transition='none'});
-window.addEventListener('pointermove',function(e){if(y0===null)return;lock.style.transform='translateY('+Math.min(0,e.clientY-y0)+'px)'});
-window.addEventListener('pointerup',function(e){if(y0===null)return;var d=e.clientY-y0;y0=null;if(d<-90||Math.abs(d)<6){unlock()}else{lock.style.transition='';lock.style.transform=''}});
+var lock=$('#lock'),y0=null,unlocked=false,passcode='',checkingCode=false,pendingMessages=false;
+var lockedScreens=$$('#home,.sheet');lockedScreens.forEach(function(el){el.inert=true});
+function drawPasscode(){$$('.passcode-dots i').forEach(function(dot,i){dot.classList.toggle('filled',i<passcode.length)})}
+function requestUnlock(messages){if(unlocked){if(messages)openMessages();return}pendingMessages=!!messages;passcode='';checkingCode=false;drawPasscode();$('#passcode-status').textContent='';lock.classList.add('passcode-open');$('#passcode-panel').hidden=false;y0=null;$('#passcode-panel [data-digit]').focus({preventScroll:true})}
+function unlock(){unlocked=true;lockedScreens.forEach(function(el){el.inert=false});$('#passcode-panel').hidden=true;lock.style.transition='';lock.style.transform='translateY(-100%)';lock.style.opacity='0';lock.inert=true;if(pendingMessages)openMessages();var focusTarget=pendingMessages?$('#ans'):$('#home [data-open]');if(focusTarget)focusTarget.focus({preventScroll:true});setTimeout(function(){lock.style.display='none'},600)}
+function enterDigit(d){if(unlocked||checkingCode||$('#passcode-panel').hidden)return;$('#passcode-status').textContent='';passcode+=d;drawPasscode();if(passcode.length===4){checkingCode=true;setTimeout(function(){if(passcode==='2210'){unlock()}else{passcode='';checkingCode=false;drawPasscode();$('#passcode-status').textContent='Not quite. Try again.'}},180)}}
+$$('[data-digit]').forEach(function(b){b.addEventListener('click',function(){enterDigit(b.dataset.digit)})});
+function deleteDigit(){if(checkingCode)return;passcode=passcode.slice(0,-1);drawPasscode();$('#passcode-status').textContent=''}
+$('#passcode-delete').addEventListener('click',deleteDigit);
+function cancelPasscode(){if(checkingCode)return;passcode='';pendingMessages=false;drawPasscode();lock.classList.remove('passcode-open');$('#passcode-panel').hidden=true;$('#hint').focus({preventScroll:true})}
+$('#passcode-cancel').addEventListener('click',cancelPasscode);
+$('#hint').addEventListener('click',function(){requestUnlock(false)});
+window.addEventListener('keydown',function(e){if(unlocked||$('#passcode-panel').hidden)return;if(/^[0-9]$/.test(e.key)){e.preventDefault();enterDigit(e.key)}else if(e.key==='Backspace'){e.preventDefault();deleteDigit()}else if(e.key==='Escape'){cancelPasscode()}});
+lock.addEventListener('pointerdown',function(e){if(lock.classList.contains('passcode-open')||e.target.closest('button'))return;y0=e.clientY});
+window.addEventListener('pointerup',function(e){if(y0===null)return;var d=e.clientY-y0;y0=null;if(d<-60||Math.abs(d)<6)requestUnlock(false)});
 $$('[data-open]').forEach(function(b){b.addEventListener('click',function(){var s=$('#'+b.dataset.open);s.classList.add('open');if(b.dataset.open==='maps')chooseDay();if(b.dataset.open==='turn')setTimeout(function(){$('#conversation').scrollTop=$('#conversation').scrollHeight},60);if(b.dataset.open==='camera')camOn()})});
 $$('.back').forEach(function(b){b.addEventListener('click',function(){b.closest('.sheet').classList.remove('open');clearInterval(cozyTimer);if(typeof camOff==='function')camOff()})});
 /* Photos and Minuit Munchies receipts. */
